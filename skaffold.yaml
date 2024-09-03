@@ -1,0 +1,59 @@
+apiVersion: skaffold/v4beta5
+kind: Config
+metadata:
+  name: zenblog-kubernetes
+build:
+  artifacts:
+    - image: longdd90jp/aws-api-gateway
+      context: aws-api-gateway
+    - image: longdd90jp/aws-service-uaa
+      context: aws-service-uaa
+    - image: longdd90jp/aws-service-comment
+      context: aws-service-comment
+    - image: longdd90jp/aws-service-post
+      context: aws-service-post
+
+#    - image: longdd90jp/aws-service-uaa
+#      jib:
+#        project: aws-service-uaa
+#        args:
+#          - -DskipTests
+#    - image: longdd90jp/aws-service-post
+#      jib:
+#        project: aws-service-post
+#        args:
+#          - -DskipTests
+#    - image: longdd90jp/aws-service-comment
+#      jib:
+#        project: aws-service-comment
+#        args:
+#          - -DskipTests
+  tagPolicy:
+    gitCommit: {}
+manifests:
+  rawYaml:
+    #    - k8s/zipkin-server.yaml
+    #    - k8s/app-*.yaml
+    #    - k8s/db-*.yaml
+    - k8s/env-configmap.yaml
+    - k8s/env-secret.yaml
+#    - k8s/db-configmap.yaml
+#    - k8s/db-secret.yaml
+#    - k8s/mysql-*.yaml
+#    - k8s/redis-*.yaml
+    - k8s/ingress.yaml
+    #    - k8s/privileges.yaml
+    - aws-api-gateway/k8s/*.yaml
+    - aws-service-uaa/k8s/*.yaml
+    - aws-service-post/k8s/*.yaml
+    - aws-service-comment/k8s/*.yaml
+
+#  kustomize:
+#    paths:
+#      - aws-api-gateway/deployments/base
+#      - aws-service-uaa/deployments/base
+#      - aws-service-comment/deployments/base
+#      - aws-service-post/deployments/base
+deploy:
+  kubectl:
+    defaultNamespace: dev-envoy

@@ -1,0 +1,29 @@
+server:
+  port: ${REST_SERVER_PORT:3002}
+
+spring:
+  profiles:
+    active: ${ACTIVE_PROFILE:local}
+  application:
+    name: sample-kafka
+  output:
+    ansi:
+      enabled: always
+
+#kafka
+  kafka:
+    bootstrap-servers: ${KAFKA_SERVERS:localhost:9092,localhost:9093,localhost:9094}
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+    streams:
+      properties:
+        default.key.serde: org.apache.kafka.common.serialization.Serdes$StringSerde
+        default.value.serde: org.springframework.kafka.support.serializer.JsonSerde
+        spring.json.trusted.packages: "*"
+      state-dir: /tmp/kafka-streams/
+
+#grpc
+grpc:
+  server:
+    port: ${GRPC_SERVER_PORT:3101}
