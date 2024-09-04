@@ -1,9 +1,9 @@
 package demo.aws.sample.kafka.config;
 
 import org.springframework.context.annotation.Configuration;
-import org.springframework.kafka.annotation.EnableKafkaStreams;
+import org.springframework.kafka.annotation.EnableKafka;
 
 @Configuration
-@EnableKafkaStreams
+@EnableKafka
 public class KafkaConfig {
 }
