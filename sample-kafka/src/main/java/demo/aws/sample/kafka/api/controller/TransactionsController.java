@@ -27,7 +27,19 @@ public class TransactionsController {
     KafkaTemplate<String, Order> kafkaTemplate;
 
     @PostMapping("/transactions")
-    public void generateAndSendMessages(@RequestBody InputParameters inputParameters) {
+    public void generateAndSendMessagesSync(@RequestBody InputParameters inputParameters) {
+        for (long i = 0; i < inputParameters.getNumberOfMessages(); i++) {
+            Order o = new Order(String.valueOf(id++), i+1, i+2, 1000, "NEW", groupId);
+            CompletableFuture<SendResult<String, Order>> result =
+                    kafkaTemplate.send("transactions", o.getId(), o);
+            result.whenComplete((sr, ex) ->
+                    LOG.info("Sent({}): {}", sr.getProducerRecord().key(), sr.getProducerRecord().value()));
+        }
+        groupId++;
+    }
+
+    @PostMapping("/transactions-async")
+    public void generateAndSendMessagesAsync(@RequestBody InputParameters inputParameters) {
         for (long i = 0; i < inputParameters.getNumberOfMessages(); i++) {
             Order o = new Order(String.valueOf(id++), i+1, i+2, 1000, "NEW", groupId);
             CompletableFuture<SendResult<String, Order>> result =
@@ -37,5 +49,4 @@ public class TransactionsController {
         }
         groupId++;
     }
-
 }

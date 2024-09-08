@@ -28,7 +28,7 @@ spring:
         spring.json.trusted.packages: "*"
       state-dir: /tmp/kafka-streams/
     listener:
-      ack-mode: record
+      ack-mode: manual_immediate
 
 #grpc
 grpc:
