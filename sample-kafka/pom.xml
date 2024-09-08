@@ -71,6 +71,16 @@
             <artifactId>common-util</artifactId>
             <version>0.1</version>
         </dependency>
+        <dependency>
+            <groupId>demo.aws.core</groupId>
+            <artifactId>common-util</artifactId>
+            <version>0.1</version>
+        </dependency>
+        <dependency>
+            <groupId>demo.aws</groupId>
+            <artifactId>sample-common</artifactId>
+            <version>0.1</version>
+        </dependency>
 
         <!-- grpc -->
         <dependency>

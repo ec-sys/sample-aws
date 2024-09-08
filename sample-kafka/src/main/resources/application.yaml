@@ -27,8 +27,13 @@ spring:
         default.value.serde: org.springframework.kafka.support.serializer.JsonSerde
         spring.json.trusted.packages: "*"
       state-dir: /tmp/kafka-streams/
+    listener:
+      ack-mode: record
 
 #grpc
 grpc:
   server:
     port: ${GRPC_SERVER_PORT:3101}
+
+logging.level:
+  org.springframework.kafka: debug

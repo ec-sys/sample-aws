@@ -26,6 +26,7 @@
         <module>sample-graphql</module>
         <module>sample-kafka</module>
         <module>sample-rabbitmq</module>
+        <module>sample-common</module>
     </modules>
 
     <dependencyManagement>
