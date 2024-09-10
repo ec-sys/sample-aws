@@ -1,4 +1,4 @@
-package demo.aws.sample.common_util;
+package demo.aws.sample.common_util.model;
 
 import lombok.Data;
 

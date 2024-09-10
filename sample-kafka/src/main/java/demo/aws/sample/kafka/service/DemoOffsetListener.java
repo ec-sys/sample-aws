@@ -1,6 +1,6 @@
 package demo.aws.sample.kafka.service;
 
-import demo.aws.sample.common_util.Order;
+import demo.aws.sample.common_util.model.Order;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

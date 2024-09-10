@@ -1,6 +1,6 @@
 package demo.aws.sample.kafka.api.controller;
 
-import demo.aws.sample.common_util.Order;
+import demo.aws.sample.common_util.model.Order;
 import demo.aws.sample.kafka.api.request.InputParameters;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
