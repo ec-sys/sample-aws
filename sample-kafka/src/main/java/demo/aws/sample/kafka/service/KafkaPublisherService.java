@@ -7,9 +7,11 @@ import demo.aws.sample.kafka.domain.model.OrderStatus;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.core.KafkaTemplate;
+import org.springframework.kafka.support.SendResult;
 import org.springframework.stereotype.Service;
 
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 
 @Service
 @Slf4j
@@ -23,7 +25,8 @@ public class KafkaPublisherService {
         requestDto.setOrderId(uuid.toString());
         requestDto.setStatus(OrderStatus.NEW);
         requestDto.setPayload(request.getMessage());
-        kafkaTemplate.send(KafkaConstant.TOPIC_ORDER, String.valueOf(requestDto.getOrderId()), requestDto);
+        CompletableFuture<SendResult<String, KafkaProcessRequestDto>> future =
+                kafkaTemplate.send(KafkaConstant.TOPIC_ORDER, String.valueOf(requestDto.getOrderId()), requestDto);
         log.info("Sent: {}", requestDto);
         return requestDto.getOrderId();
     }
