@@ -1,0 +1,10 @@
+alias kt='sh kafka_2.12-3.8.0/bin/kafka-topics.sh --bootstrap-server localhost:9092,localhost:9093,localhost:9094 '
+alias kcc='sh kafka_2.12-3.8.0/bin/kafka-console-consumer.sh --bootstrap-server localhost:9092,localhost:9093,localhost:9094 '
+alias kcp='sh kafka_2.12-3.8.0/bin/kafka-console-producer.sh --bootstrap-server localhost:9092,localhost:9093,localhost:9094 '
+alias kcg='sh kafka_2.12-3.8.0/bin/kafka-consumer-groups.sh --bootstrap-server localhost:9092,localhost:9093,localhost:9094 '
+
+kt --list
+kt --create --topic demo-topic --partitions 3 --replication-factor 3
+kcp --topic demo-topic --property parse.key=true --property key.separator=";"
+kcc --topic demo-topic --property print.key=true --property print.partition=true --property print.offset=true --consumer-property group.id=test1
+kcc --topic demo-topic --property print.key=true --property print.partition=true --property print.offset=true --consumer-property group.id=test2
