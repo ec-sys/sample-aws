@@ -8,3 +8,36 @@ kt --create --topic demo-topic --partitions 3 --replication-factor 3
 kcp --topic demo-topic --property parse.key=true --property key.separator=";"
 kcc --topic demo-topic --property print.key=true --property print.partition=true --property print.offset=true --consumer-property group.id=test1
 kcc --topic demo-topic --property print.key=true --property print.partition=true --property print.offset=true --consumer-property group.id=test2
+
+
+
+docker exec -it ksqldb-cli ksql http://ksqldb-server:8088
+SHOW TOPICS;
+SET 'auto.offset.reset'='earliest';
+
+CREATE STREAM users_stream (
+    user_id INT KEY,
+    user_name VARCHAR
+  ) WITH (
+    KAFKA_TOPIC = 'users',
+    VALUE_FORMAT = 'JSON'
+  );
+INSERT INTO users_stream (user_id,user_name) VALUES (1, 'Long');
+INSERT INTO users_stream (user_id,user_name) VALUES (2, 'Van');
+INSERT INTO users_stream (user_id,user_name) VALUES (3, 'Tam');
+DROP STREAM IF EXISTS pageviews;
+
+SELECT 'Hello, ' + user_name as greeting
+FROM users_stream
+EMIT CHANGES;
+
+kcc --topic users --property print.key=true --property print.partition=true --property print.offset=true --consumer-property group.id=test1 --from-beginning
+
+CREATE STREAM pageviews (
+    page_id BIGINT,
+    viewtime BIGINT,
+    user_id VARCHAR
+  ) WITH (
+    KAFKA_TOPIC = 'keyless-pageviews-topic',
+    VALUE_FORMAT = 'JSON'
+  );
