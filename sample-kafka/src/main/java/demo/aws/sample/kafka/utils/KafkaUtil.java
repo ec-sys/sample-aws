@@ -11,51 +11,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.*;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
+import java.util.concurrent.*;
 import java.util.stream.Collectors;
 
 public class KafkaUtil implements AutoCloseable {
 
     private final Logger logger = LoggerFactory.getLogger(KafkaUtil.class);
     private ExecutorService executorService = Executors.newFixedThreadPool(1);
-
-    public class Randomizer implements AutoCloseable, Runnable {
-        private Properties props;
-        private String topic;
-        private Producer<String, String> producer;
-        private boolean closed;
-
-        public Randomizer(Properties producerProps, String topic) {
-            this.closed = false;
-            this.topic = topic;
-            this.props = producerProps;
-            this.props.setProperty("client.id", "faker");
-        }
-
-        public void run() {
-            try (KafkaProducer producer = new KafkaProducer<String, String>(props)) {
-                Faker faker = new Faker();
-                while (!closed) {
-                    try {
-                        Object result = producer.send(new ProducerRecord<>(
-                                this.topic,
-                                faker.chuckNorris().fact())).get();
-                        Thread.sleep(5000);
-                    } catch (InterruptedException e) {
-                    }
-                }
-            } catch (Exception ex) {
-                logger.error(ex.toString());
-            }
-        }
-        public void close()  {
-            closed = true;
-        }
-    }
 
     public Randomizer startNewRandomizer(Properties producerProps, String topic) {
         Randomizer rv = new Randomizer(producerProps, topic);
@@ -68,7 +30,7 @@ public class KafkaUtil implements AutoCloseable {
         try (final AdminClient client = AdminClient.create(allProps)) {
             logger.info("Creating topics");
 
-            client.createTopics(topics).values().forEach( (topic, future) -> {
+            client.createTopics(topics).values().forEach((topic, future) -> {
                 try {
                     future.get();
                 } catch (Exception ex) {
@@ -102,6 +64,41 @@ public class KafkaUtil implements AutoCloseable {
         if (executorService != null) {
             executorService.shutdownNow();
             executorService = null;
+        }
+    }
+
+    public class Randomizer implements AutoCloseable, Runnable {
+        private final Properties props;
+        private final String topic;
+        private Producer<String, String> producer;
+        private boolean closed;
+
+        public Randomizer(Properties producerProps, String topic) {
+            this.closed = false;
+            this.topic = topic;
+            this.props = producerProps;
+            this.props.setProperty("client.id", "faker");
+        }
+
+        public void run() {
+            try (KafkaProducer producer = new KafkaProducer<String, String>(props)) {
+                Faker faker = new Faker();
+                while (!closed) {
+                    try {
+                        Object result = producer.send(new ProducerRecord<>(
+                                this.topic,
+                                faker.chuckNorris().fact())).get();
+                        Thread.sleep(5000);
+                    } catch (InterruptedException e) {
+                    }
+                }
+            } catch (Exception ex) {
+                logger.error(ex.toString());
+            }
+        }
+
+        public void close() {
+            closed = true;
         }
     }
 }

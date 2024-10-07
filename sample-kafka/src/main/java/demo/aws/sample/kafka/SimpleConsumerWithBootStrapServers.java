@@ -1,11 +1,11 @@
 package demo.aws.sample.kafka;
 
 import org.apache.kafka.clients.consumer.*;
-import org.apache.kafka.common.serialization.LongDeserializer;
 import org.apache.kafka.common.serialization.StringDeserializer;
 
 import java.time.Duration;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Properties;
 
 public class SimpleConsumerWithBootStrapServers {
@@ -15,7 +15,7 @@ public class SimpleConsumerWithBootStrapServers {
     private static final String INPUT_TOPIC = "trans-input";
 
     public static void main(String[] args) {
-        try(final Consumer<String, String> consumer = createConsumer()) {
+        try (final Consumer<String, String> consumer = createConsumer()) {
             while (true) {
                 ConsumerRecords<String, String> records = consumer.poll(Duration.ofMinutes(1));
                 for (ConsumerRecord<String, String> record : records) {
@@ -35,7 +35,7 @@ public class SimpleConsumerWithBootStrapServers {
         // Create the consumer using props.
         final Consumer<String, String> consumer = new KafkaConsumer<String, String>(props);
         // Subscribe to the topic.
-        consumer.subscribe(Arrays.asList(INPUT_TOPIC));
+        consumer.subscribe(List.of(INPUT_TOPIC));
         return consumer;
     }
 

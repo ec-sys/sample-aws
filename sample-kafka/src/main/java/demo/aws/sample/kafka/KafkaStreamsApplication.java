@@ -5,10 +5,12 @@ import org.apache.kafka.clients.admin.NewTopic;
 import org.apache.kafka.common.serialization.Serde;
 import org.apache.kafka.common.serialization.Serdes;
 import org.apache.kafka.streams.KafkaStreams;
-import org.apache.kafka.streams.KeyValue;
 import org.apache.kafka.streams.StreamsBuilder;
 import org.apache.kafka.streams.Topology;
-import org.apache.kafka.streams.kstream.*;
+import org.apache.kafka.streams.kstream.Branched;
+import org.apache.kafka.streams.kstream.Consumed;
+import org.apache.kafka.streams.kstream.KStream;
+import org.apache.kafka.streams.kstream.Named;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -42,6 +44,7 @@ public class KafkaStreamsApplication {
 
         logger.info("Streams Closed");
     }
+
     static Topology buildTopology(String inputTopic, String outputTopic) {
         Serde<String> stringSerde = Serdes.String();
 
@@ -60,26 +63,26 @@ public class KafkaStreamsApplication {
 //                .to(outputTopic, Produced.with(stringSerde, stringSerde));
 
         // split + branch
-         final Map<String, KStream<String, String>> forks =
-         builder
-             .stream(inputTopic, Consumed.with(stringSerde, stringSerde))
-             .peek((k,v) -> logger.info("Observed event: key:{}, value: {}", k, v))
-             .split(Named.as("test-"))
-             .branch((key, value) -> value.contains("can"), Branched.as("can"))
-             .branch((key, value) -> !value.contains("need"), Branched.as("need"))
-             .defaultBranch(Branched.as("default"));
+        final Map<String, KStream<String, String>> forks =
+                builder
+                        .stream(inputTopic, Consumed.with(stringSerde, stringSerde))
+                        .peek((k, v) -> logger.info("Observed event: key:{}, value: {}", k, v))
+                        .split(Named.as("test-"))
+                        .branch((key, value) -> value.contains("can"), Branched.as("can"))
+                        .branch((key, value) -> !value.contains("need"), Branched.as("need"))
+                        .defaultBranch(Branched.as("default"));
         //     // .noDefaultBranch();
 
-             forks.get("test-can")
-                 .peek((k,v) -> logger.info("Can events: key:{}, value: {}", k, v));
+        forks.get("test-can")
+                .peek((k, v) -> logger.info("Can events: key:{}, value: {}", k, v));
         //         // .to("can-topic");
 
-             forks.get("test-need")
-                 .peek((k,v) -> logger.info("Need events: key:{}, value: {}", k, v));
+        forks.get("test-need")
+                .peek((k, v) -> logger.info("Need events: key:{}, value: {}", k, v));
         //         // .to("need-topic");
 
-             forks.get("test-default")
-                 .peek((k,v) -> logger.info("Test events: key:{}, value: {}", k, v));
+        forks.get("test-default")
+                .peek((k, v) -> logger.info("Test events: key:{}, value: {}", k, v));
         //         // .to("default-topic");
 
 
@@ -91,6 +94,7 @@ public class KafkaStreamsApplication {
 
         return builder.build();
     }
+
     public static void main(String[] args) throws Exception {
 
         if (args.length < 1) {

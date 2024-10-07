@@ -1,20 +1,21 @@
 package demo.aws.sample.kafka;
 
-import org.apache.kafka.clients.CommonClientConfigs;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.common.serialization.Serdes;
 import org.apache.kafka.streams.KafkaStreams;
 import org.apache.kafka.streams.KeyValue;
+import org.apache.kafka.streams.StreamsBuilder;
 import org.apache.kafka.streams.StreamsConfig;
 import org.apache.kafka.streams.kstream.KStream;
-import org.apache.kafka.streams.StreamsBuilder;
+
+import java.time.Duration;
 import java.util.Arrays;
 import java.util.Properties;
 import java.util.regex.Pattern;
 
 public class WordCountExample {
 
-    public static void main(String[] args) throws Exception{
+    public static void main(String[] args) throws Exception {
 
         Properties props = getProperties();
 
@@ -29,11 +30,11 @@ public class WordCountExample {
 
 
         final Pattern pattern = Pattern.compile("\\W+");
-        KStream counts  = source.flatMapValues(value-> Arrays.asList(pattern.split(value.toLowerCase())))
+        KStream counts = source.flatMapValues(value -> Arrays.asList(pattern.split(value.toLowerCase())))
                 .map((key, value) -> new KeyValue<Object, Object>(value, value))
                 .filter((key, value) -> (!value.equals("the")))
                 .groupByKey()
-                .count().mapValues(value->Long.toString(value)).toStream();
+                .count().mapValues(value -> Long.toString(value)).toStream();
         counts.to("word-count-output");
 
         KafkaStreams streams = new KafkaStreams(builder.build(), props);
@@ -45,7 +46,7 @@ public class WordCountExample {
 
         // usually the stream application would be running forever,
         // in this example we just let it run for some time and stop since the input data is finite.
-        Thread.sleep(5000L);
+        Thread.sleep(Duration.ofMinutes(10).toMillis());
 
         streams.close();
 

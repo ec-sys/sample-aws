@@ -10,5 +10,5 @@ public enum OrderStatus {
     COMPLETED,
     CANCELLED,
     REJECTED,
-    ROLLBACK;
+    ROLLBACK
 }

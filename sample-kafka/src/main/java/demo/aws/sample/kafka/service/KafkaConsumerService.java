@@ -18,8 +18,8 @@ public class KafkaConsumerService {
 
     @KafkaListener(id = KafkaConstant.LISTENER_CREATE_ORDER, topics = KafkaConstant.TOPIC_ORDER, groupId = KafkaConstant.GROUP_CUSTOMER)
     public void onCreateOrderEvent(KafkaProcessRequestDto requestDto) {
-        log.info("Received: {}" , requestDto);
-        if(OrderStatus.NEW.equals(requestDto.getStatus())) {
+        log.info("Received: {}", requestDto);
+        if (OrderStatus.NEW.equals(requestDto.getStatus())) {
             confirm(requestDto);
         }
     }

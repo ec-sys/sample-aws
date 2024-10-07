@@ -2,8 +2,8 @@ package demo.aws.sample.kafka.domain.model;
 
 public class Tuple {
 
-    private String key;
-    private Integer value;
+    private final String key;
+    private final Integer value;
 
     private Tuple(String key, Integer value) {
         this.key = key;

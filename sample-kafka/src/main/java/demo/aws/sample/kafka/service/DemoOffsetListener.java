@@ -18,6 +18,9 @@ import java.util.concurrent.Executors;
 public class DemoOffsetListener {
 
     private static final Logger LOG = LoggerFactory.getLogger(DemoOffsetListener.class);
+    ExecutorService executorService = Executors.newFixedThreadPool(30);
+    @Autowired
+    private DemoOffsetProcessor processor;
 
     @KafkaListener(
             id = "transactions",
@@ -31,11 +34,6 @@ public class DemoOffsetListener {
         Thread.sleep(5000L);
         LOG.info("[partition={},offset={}] Finished: {}", partition, offset, order);
     }
-
-    ExecutorService executorService = Executors.newFixedThreadPool(30);
-
-    @Autowired
-    private DemoOffsetProcessor processor;
 
     // !!! before testing set the spring.kafka.listener.ack-mode property to ack-mode: MANUAL_IMMEDIATE !!!
     @KafkaListener(
