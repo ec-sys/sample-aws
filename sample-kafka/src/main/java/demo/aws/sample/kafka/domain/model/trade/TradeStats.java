@@ -1,4 +1,4 @@
-package demo.aws.sample.kafka.domain.model;
+package demo.aws.sample.kafka.domain.model.trade;
 
 public class TradeStats {
 

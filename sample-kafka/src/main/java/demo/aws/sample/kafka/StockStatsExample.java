@@ -1,8 +1,8 @@
 package demo.aws.sample.kafka;
 
-import demo.aws.sample.kafka.domain.constant.Constants;
-import demo.aws.sample.kafka.domain.model.Trade;
-import demo.aws.sample.kafka.domain.model.TradeStats;
+import demo.aws.sample.kafka.domain.constant.StockConstant;
+import demo.aws.sample.kafka.domain.model.trade.Trade;
+import demo.aws.sample.kafka.domain.model.trade.TradeStats;
 import demo.aws.sample.kafka.domain.serde.JsonDeserializer;
 import demo.aws.sample.kafka.domain.serde.JsonSerializer;
 import demo.aws.sample.kafka.domain.serde.WrapperSerde;
@@ -61,7 +61,7 @@ public class StockStatsExample {
 
         StreamsBuilder builder = new StreamsBuilder();
 
-        KStream<String, Trade> source = builder.stream(Constants.STOCK_TOPIC);
+        KStream<String, Trade> source = builder.stream(StockConstant.STOCK_TOPIC);
 
         KStream<Windowed<String>, TradeStats> stats = source
                 .groupByKey()
@@ -73,6 +73,7 @@ public class StockStatsExample {
                 .mapValues((trade) -> trade.computeAvgPrice());
 
         stats.to("stock-stats-output", Produced.keySerde(WindowedSerdes.timeWindowedSerdeFrom(String.class, windowSize)));
+        // stats.to("stock-stats-output");
 
         Topology topology = builder.build();
 

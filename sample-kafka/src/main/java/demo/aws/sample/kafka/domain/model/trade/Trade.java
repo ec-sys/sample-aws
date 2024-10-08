@@ -1,4 +1,4 @@
-package demo.aws.sample.kafka.domain.model;
+package demo.aws.sample.kafka.domain.model.trade;
 
 /**
  * Created by gwen on 1/22/17.
